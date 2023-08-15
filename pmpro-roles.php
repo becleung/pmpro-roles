@@ -234,7 +234,7 @@ class PMPRO_Roles {
 			$new_roles = array();
 			$old_roles = array();
 	
-			// Add default role to $old_roles if it is already one of the user roles
+			// Add default role to $old_roles if it is already one of the user roles.
 			$default_role = apply_filters( 'pmpro_roles_downgraded_role', get_option( 'default_role' ) );
 			if ( in_array( $default_role, $user->roles ) ) {
                 		$old_roles = array( $default_role );
