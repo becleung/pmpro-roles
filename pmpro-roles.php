@@ -234,6 +234,12 @@ class PMPRO_Roles {
 			$new_roles = array();
 			$old_roles = array();
 	
+			// Add default role to $old_roles if it is already one of the user roles.
+			$default_role = apply_filters( 'pmpro_roles_downgraded_role', get_option( 'default_role' ) );
+			if ( in_array( $default_role, $user->roles ) ) {
+                		$old_roles = array( $default_role );
+			}
+
 			// Build an array of all roles assigned to the user's old membership levels.
 			foreach ( $old_levels as $old_level ) {
 				$old_level_roles = self::get_roles_for_level( $old_level->id );
@@ -266,12 +272,6 @@ class PMPRO_Roles {
 			// Remove roles from user.
 			foreach ( $remove_roles as $remove_role ) {
 				$user->remove_role( $remove_role );
-			}
-
-			// Handle case where role can be "simplified" to a single role.
-			$default_role = apply_filters( 'pmpro_roles_downgraded_role', get_option( 'default_role' ) );
-			if ( in_array( $default_role, $user->roles, true ) && count( $user->roles ) == 2 ) {
-				$user->remove_role( $default_role );
 			}
 
 			// Handle case where user has no role.
