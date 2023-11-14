@@ -37,8 +37,11 @@ class PMPRO_Roles {
 		} else {
 			add_action( 'pmpro_after_all_membership_level_changes', array( $this, 'after_all_level_changes' ), 10, 1 );
 		}
-		
+
 		add_action( 'pmpro_membership_level_after_other_settings', array( 'PMPRO_Roles', 'level_settings' ) );
+
+		add_action( 'pmpro_manage_memberslist_columns', array( $this, 'add_role_column_to_members_list' ) );
+		add_action( 'pmpro_manage_memberslist_custom_column', array( $this, 'add_role_column_content_to_members_list' ), 10, 2 );
 	}
 
 	/**
@@ -54,7 +57,6 @@ class PMPRO_Roles {
 		add_filter( 'plugin_row_meta', array( 'PMPRO_Roles', 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'editable_roles', array( 'PMPRO_Roles', 'remove_list_roles' ), 10, 1 );
 		add_action( 'admin_init', array( 'PMPRO_Roles', 'delete_and_deactivate' ) );
-
 	}
 
 	/** 
@@ -514,6 +516,39 @@ class PMPRO_Roles {
 
 		return $roles;
 
+	}
+
+	/**
+	 * Add a "Role" column to the Members List table.
+	 * @since TBD
+	 * @param array $columns The columns in the members list table.
+	 * @return array The columns in the members list table, with the "Role" column added.
+	 */
+	public static function add_role_column_to_members_list( $columns ) {
+		$columns['role'] = __( 'Role', 'pmpro-roles' );
+		return $columns;
+	}
+
+	/**
+	 * Add content to the "Role" column in the Members List table.
+	 * @since TBD
+	 * @param string $column_name The name of the column.
+	 * @param int $user_id The ID of the user.
+	 * @return void
+	 */
+	public static function add_role_column_content_to_members_list( $column_name, $user_id ) {
+		global $wp_roles;
+		if ( $column_name === 'role' && ! empty( $wp_roles->roles ) ) {
+			$user = get_userdata( $user_id );
+			$roles = $user->roles;
+
+			// Get the display name for each role
+			$role_names = array_map( function ( $role ) use ( $wp_roles ) {
+				return isset( $wp_roles->roles[$role]['name'] ) ? translate_user_role( $wp_roles->roles[$role]['name'] ) : ucfirst( $role );
+			}, $roles );
+
+			echo esc_html( implode( ', ', $role_names ) );
+		}
 	}
 
 	/**
