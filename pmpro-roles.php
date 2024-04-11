@@ -524,7 +524,7 @@ class PMPRO_Roles {
 	 * @param array $columns The columns in the members list table.
 	 * @return array The columns in the members list table, with the "Role" column added.
 	 */
-	public static function add_role_column_to_members_list( $columns ) {
+	public function add_role_column_to_members_list( $columns ) {
 		$columns['role'] = __( 'Role', 'pmpro-roles' );
 		return $columns;
 	}
@@ -536,7 +536,7 @@ class PMPRO_Roles {
 	 * @param int $user_id The ID of the user.
 	 * @return void
 	 */
-	public static function add_role_column_content_to_members_list( $column_name, $user_id ) {
+	public function add_role_column_content_to_members_list( $column_name, $user_id ) {
 		global $wp_roles;
 		if ( $column_name === 'role' && ! empty( $wp_roles->roles ) ) {
 			$user = get_userdata( $user_id );
